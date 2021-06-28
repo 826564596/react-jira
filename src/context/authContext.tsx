@@ -1,21 +1,21 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useState } from "react";
 import * as auth from "authProvider";
 import { User } from "screens/projectList/SearchPanel";
 import { http } from "utils/http";
+import { useMount } from "utils";
 interface AuthForm {
     username: string;
     password: string;
 }
-const AuthContext =
-    React.createContext<
-        | {
-              user: User | null;
-              login: (form: AuthForm) => Promise<void>;
-              register: (form: AuthForm) => Promise<void>;
-              loginOut: () => Promise<void>;
-          }
-        | undefined
-    >(undefined);
+const AuthContext = React.createContext<
+    | {
+          user: User | null;
+          login: (form: AuthForm) => Promise<void>;
+          register: (form: AuthForm) => Promise<void>;
+          loginOut: () => Promise<void>;
+      }
+    | undefined
+>(undefined);
 AuthContext.displayName = "AuthContext";
 
 /**初始化user */
@@ -48,10 +48,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         });
     };
     //初始化更新时候调用
-    useEffect(() => {
-        bootstrapUser().then((res) => {
-            setUser(res);
-        });
+    useMount(() => {
+        bootstrapUser().then(setUser);
     });
     return <AuthContext.Provider children={children} value={{ user, login, register, loginOut }}></AuthContext.Provider>;
 };

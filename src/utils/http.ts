@@ -1,8 +1,7 @@
 import qs from "qs";
-import axios from "axios";
-import { getToken, loginOut } from "authProvider";
+// import axios from "axios";
+import { loginOut } from "authProvider";
 import { useAuth } from "context/authContext";
-import { type } from "os";
 const apiUrl = process.env.REACT_APP_API_URL;
 // // http request 响应器
 // axios.interceptors.request.use((config) => {
@@ -55,6 +54,7 @@ export const http = async (endpoint: string, { data, token, headers, ...customCo
         }
     });
 };
+/**使用fetch对请求进行封装 */
 export const useHttp = () => {
     const { user } = useAuth();
     return (...[endpoint, config]: Parameters<typeof http>) => {

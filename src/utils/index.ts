@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
 
-export const isFalsy = (value: string | number): boolean => {
+export const isFalsy = (value: unknown): boolean => {
     return value === 0 ? false : !value;
 };
 
-export const clearObject = (object: any) => {
+export const isVoid = (value: unknown) => {
+    return value === undefined || value === null || value === "";
+};
+
+export const clearObject = (object: { [key: string]: unknown }) => {
     const result = { ...object };
-    Object.keys(result).forEach((item) => {
+    Object.keys(result).forEach((item: string) => {
         const value = result[item];
-        if (isFalsy(value)) {
+        if (isVoid(value)) {
             delete result[item];
         }
     });
@@ -18,6 +22,7 @@ export const clearObject = (object: any) => {
 export const useMount = (callback: () => void) => {
     useEffect(() => {
         callback();
+        //eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 };
 /**防抖函数 */

@@ -2,7 +2,6 @@ import { useAuth } from "context/authContext";
 import React from "react";
 import UnauthenticatedApp from "unauthenticatedApp";
 import AuthenticatedApp from "authenticatedApp";
-
 import "./App.css";
 
 function App() {

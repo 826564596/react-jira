@@ -1,8 +1,8 @@
 import React from "react";
 import { User } from "./SearchPanel";
-import { Table } from "antd";
+import { Table, TableProps } from "antd";
 import dayjs from "dayjs";
-interface Project {
+export interface Project {
     id: string;
     name: string;
     personId: string;
@@ -10,15 +10,17 @@ interface Project {
     organization: string;
     created: number;
 }
-interface ListProps {
-    list: Project[];
+//这样可以将Table里的所有属性暴露给List,通过在使用List的时候传Table的属性就可以了
+//List新增users属性
+interface ListProps extends TableProps<Project> {
     users: User[];
 }
-function List({ list, users }: ListProps) {
+//将传入的props先给users赋值，剩下的传给props
+function List({ users, ...props }: ListProps) {
     return (
         <div>
             <Table
-                dataSource={list}
+                {...props} //将剩下的props赋值给Table
                 columns={[
                     { title: "名称", dataIndex: "name", sorter: (a, b) => a.name.localeCompare(b.name) },
                     { title: "部门", dataIndex: "organization" },

@@ -1,12 +1,19 @@
-import React, { FormEvent } from "react";
+import React from "react";
 import { useAuth } from "context/authContext";
-import { Button, Form, Input } from "antd";
+import { Form, Input } from "antd";
 import { LongButton } from "unauthenticatedApp";
+import { useAsync } from "utils/useAsync";
+interface LoginScreenProps {
+    onError: (error: Error) => void;
+}
 /**登录页面 */
-const LoginScreen = () => {
-    const { login, user } = useAuth();
+const LoginScreen = ({ onError }: LoginScreenProps) => {
+    const { login } = useAuth();
+    const { run, isLoading } = useAsync(undefined, { throwOnError: true }); //用于登录按钮的状态
     const handleSubmit = (values: { username: string; password: string }) => {
-        login(values);
+        run(login(values)).catch((e) => {
+            onError(e);
+        });
     };
     return (
         <Form onFinish={handleSubmit}>
@@ -17,7 +24,7 @@ const LoginScreen = () => {
                 <Input placeholder={"密码"} type="password" id={"password"} />
             </Form.Item>
             <Form.Item>
-                <LongButton htmlType={"submit"} type={"primary"}>
+                <LongButton loading={isLoading} htmlType={"submit"} type={"primary"}>
                     登录
                 </LongButton>
             </Form.Item>
