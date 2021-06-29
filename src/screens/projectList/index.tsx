@@ -15,7 +15,7 @@ function ProjectListScreen() {
     const debounceParam = useDebounce(param, 2000);
     const { isLoading, error, data: list } = useProjects(debounceParam);
     const { data: users } = useUsers();
-    useDocumentTitle("项目列表", true);
+    useDocumentTitle("项目列表", false);
     return (
         <Container>
             <h1>项目列表</h1>

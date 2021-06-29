@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 /**各个工具函数和一些简单hook */
 
 export const isFalsy = (value: unknown): boolean => {
@@ -63,12 +63,10 @@ export const useArray = <T>(array: T[]) => {
 /**
  * 操作页面的title
  * @param title 文档的title
- * @param keepOnUnMount 是否保持当前页面的title
+ * @param keepOnUnMount 是否保持当前页面的title,true时保留当前标题，false 还原标题
  */
 export const useDocumentTitle = (title: string, keepOnUnMount: boolean = true) => {
-    const oldTitle = document.title;
-    debugger;
-    window.console.log("sss");
+    const oldTitle = useRef(document.title).current;
     //更新
     useEffect(() => {
         document.title = title;
@@ -77,9 +75,8 @@ export const useDocumentTitle = (title: string, keepOnUnMount: boolean = true) =
     useEffect(() => {
         return () => {
             if (!keepOnUnMount) {
-                console.log("卸载时的title", oldTitle);
                 document.title = oldTitle;
             }
         };
-    }, []);
+    }, [keepOnUnMount, oldTitle]);
 };
