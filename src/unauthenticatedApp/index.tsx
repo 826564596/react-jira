@@ -15,6 +15,13 @@ const UnauthenticatedApp = () => {
         <Container>
             <Header />
             <Background />
+            <Button
+                onClick={() => {
+                    throw new Error("抛出异常");
+                }}
+            >
+                抛出异常
+            </Button>
             <ShadowCard>
                 <Title>{isRegister ? "请登录" : "请注册"}</Title>
                 {error ? <Typography.Text type={"danger"}>{error.message}</Typography.Text> : null}
