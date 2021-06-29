@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import { Spin, Typography } from "antd";
 import { DevTools } from "jira-dev-tool";
-import Raect from "react";
 export const Row = styled.div<{
     gap?: number | boolean;
     between?: boolean;

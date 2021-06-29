@@ -8,11 +8,8 @@ import { Button, Dropdown, Menu } from "antd";
 /**登录成功页面 */
 const AuthenticatedApp = () => {
     const { loginOut, user } = useAuth();
-    const value: any = undefined;
     return (
         <Container>
-            111
-            {value.aaa}
             <Header between={true}>
                 <HeaderLeft gap={true}>
                     <SoftwareLogo width={"18rem"} color={"rgb(38,132,255)"} />

@@ -6,22 +6,17 @@ import styled from "@emotion/styled";
 import logo from "assets/logo.svg";
 import left from "assets/left.svg";
 import right from "assets/right.svg";
-
+// import { Helmet } from "react-helmet";
+import { useDocumentTitle } from "utils";
 /**未登录页面 包括注册登录页面 */
 const UnauthenticatedApp = () => {
     const [isRegister, setIsRegister] = useState(false);
     const [error, setError] = useState<Error | null>(null);
+    // useDocumentTitle("请登录注册");
     return (
         <Container>
             <Header />
             <Background />
-            <Button
-                onClick={() => {
-                    throw new Error("抛出异常");
-                }}
-            >
-                抛出异常
-            </Button>
             <ShadowCard>
                 <Title>{isRegister ? "请登录" : "请注册"}</Title>
                 {error ? <Typography.Text type={"danger"}>{error.message}</Typography.Text> : null}

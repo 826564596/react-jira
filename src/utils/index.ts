@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+/**各个工具函数和一些简单hook */
 
 export const isFalsy = (value: unknown): boolean => {
     return value === 0 ? false : !value;
@@ -57,4 +58,28 @@ export const useArray = <T>(array: T[]) => {
         setValue(value.filter((item, idx) => index !== idx));
     };
     return { value, clear, removeIndex, add };
+};
+
+/**
+ * 操作页面的title
+ * @param title 文档的title
+ * @param keepOnUnMount 是否保持当前页面的title
+ */
+export const useDocumentTitle = (title: string, keepOnUnMount: boolean = true) => {
+    const oldTitle = document.title;
+    debugger;
+    window.console.log("sss");
+    //更新
+    useEffect(() => {
+        document.title = title;
+    }, [title]);
+    //卸载
+    useEffect(() => {
+        return () => {
+            if (!keepOnUnMount) {
+                console.log("卸载时的title", oldTitle);
+                document.title = oldTitle;
+            }
+        };
+    }, []);
 };
