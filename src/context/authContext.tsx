@@ -3,6 +3,8 @@ import * as auth from "authProvider";
 import { User } from "screens/projectList/SearchPanel";
 import { http } from "utils/http";
 import { useMount } from "utils";
+import { useAsync } from "utils/useAsync";
+import { FullPageErrorFallBack, FullPageLoading } from "components/lib";
 interface AuthForm {
     username: string;
     password: string;
@@ -30,8 +32,7 @@ const bootstrapUser = async () => {
     }
 };
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [user, setUser] = useState<User | null>(null);
-
+    const { run, data: user, setData: setUser, error, isLoading, isIdle, isError } = useAsync<User | null>();
     const login = (form: AuthForm) => {
         return auth.login(form).then((res) => {
             setUser(res);
@@ -49,8 +50,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
     //初始化更新时候调用
     useMount(() => {
-        bootstrapUser().then(setUser);
+        run(bootstrapUser());
     });
+    //加载中
+    if (isIdle || isLoading) {
+        return <FullPageLoading />;
+    }
+    //出现错误
+    if (isError) {
+        return <FullPageErrorFallBack error={error} />;
+    }
     return <AuthContext.Provider children={children} value={{ user, login, register, loginOut }}></AuthContext.Provider>;
 };
 
