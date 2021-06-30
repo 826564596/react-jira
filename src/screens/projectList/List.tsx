@@ -2,6 +2,7 @@ import React from "react";
 import { User } from "./SearchPanel";
 import { Table, TableProps } from "antd";
 import dayjs from "dayjs";
+import { Link } from "react-router-dom";
 export interface Project {
     id: string;
     name: string;
@@ -22,7 +23,15 @@ function List({ users, ...props }: ListProps) {
             <Table
                 {...props} //将剩下的props赋值给Table
                 columns={[
-                    { title: "名称", dataIndex: "name", sorter: (a, b) => a.name.localeCompare(b.name) },
+                    {
+                        title: "名称",
+                        sorter: (a, b) => a.name.localeCompare(b.name),
+                        render(value, record) {
+                            // Link to会默认用户访问当前路由的子路由
+                            return <Link to={String(record.id)}>{record.name}</Link>;
+                            // return <Link to={`/projects/${record.id}`}>{record.name}</Link>;
+                        },
+                    },
                     { title: "部门", dataIndex: "organization" },
                     {
                         title: "负责人",
