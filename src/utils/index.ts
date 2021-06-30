@@ -80,3 +80,7 @@ export const useDocumentTitle = (title: string, keepOnUnMount: boolean = true) =
         };
     }, [keepOnUnMount, oldTitle]);
 };
+/**重置路由到根路由 */
+export const resetRoute = () => {
+    window.location.href = window.location.origin;
+};
