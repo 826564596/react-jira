@@ -4,11 +4,12 @@ import { Raw } from "types";
 
 // 将原来的的Select中的所有属性提取出来和自定义组件的参数类型idSelectProps合并
 type SelectProps = React.ComponentProps<typeof Select>;
-interface idSelectProps extends Omit<SelectProps, "value" | "onChange" | "defaultOptionName" | "options"> {
-    value: Raw | null | undefined;
-    onChange: (value?: number) => void;
-    defaultOptionName?: string;
-    options?: { name: string; id: number }[];
+//继承SelectProps中的属性，Omit<SelectProps, "value" | "onChange" | "options">删除相同的使用项
+interface idSelectProps extends Omit<SelectProps, "value" | "onChange" | "options"> {
+    value?: Raw | null | undefined; //option的value值
+    onChange: (value?: number) => void; //change函数
+    defaultOptionName?: string; //第一项的默认值
+    options?: { name: string; id: number }[]; //要遍历的数组
 }
 /**
  * value 可以传入多种类型的值
@@ -17,11 +18,11 @@ interface idSelectProps extends Omit<SelectProps, "value" | "onChange" | "defaul
  * 当选择默认类型的时候，onChange会回调undefined
  * @param props
  */
-export const idSelect = (props: idSelectProps) => {
+export const IdSelect = (props: idSelectProps) => {
     const { value, onChange, defaultOptionName, options, ...restProps } = props;
     return (
         <Select
-            value={toNumber(value)}
+            value={options?.length ? toNumber(value) : 0}
             onChange={(value) => {
                 return onChange(toNumber(value) || undefined);
             }}
