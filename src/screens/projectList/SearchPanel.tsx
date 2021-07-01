@@ -41,7 +41,7 @@ function SearchPanel({ param, setParam, users }: SearchPanelProps) {
                     <Select.Option value={""}>负责人</Select.Option>
                     {users.map((item) => {
                         return (
-                            <Select.Option key={item.id} value={item.id}>
+                            <Select.Option key={item.id} value={item.id.toString()}>
                                 {item.name}
                             </Select.Option>
                         );

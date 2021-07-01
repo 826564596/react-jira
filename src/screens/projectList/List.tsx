@@ -21,7 +21,8 @@ function List({ users, ...props }: ListProps) {
     return (
         <div>
             <Table
-                {...props} //将剩下的props赋值给Table
+                rowKey={"id"}
+                pagination={false}
                 columns={[
                     {
                         title: "名称",
@@ -47,7 +48,8 @@ function List({ users, ...props }: ListProps) {
                         },
                     },
                 ]}
-            ></Table>
+                {...props} //将剩下的props赋值给Table
+            />
         </div>
     );
 }

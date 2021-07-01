@@ -10,7 +10,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { ProjectScreen } from "screens/project";
 import { resetRoute } from "utils";
 /**登录成功页面 */
-const AuthenticatedApp = () => {
+export const AuthenticatedApp = () => {
     return (
         <Container>
             <PageHeader />
@@ -27,7 +27,7 @@ const AuthenticatedApp = () => {
         </Container>
     );
 };
-export default AuthenticatedApp;
+
 /**公共的Header*/
 const PageHeader = () => {
     const { loginOut, user } = useAuth();

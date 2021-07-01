@@ -4,7 +4,7 @@ import { User } from "screens/projectList/SearchPanel";
 import { http } from "utils/http";
 import { useMount } from "utils";
 import { useAsync } from "utils/useAsync";
-import { FullPageErrorFallBack, FullPageLoading } from "components/lib";
+import { FullPageErrorFallback, FullPageLoading } from "components/lib";
 interface AuthForm {
     username: string;
     password: string;
@@ -12,24 +12,23 @@ interface AuthForm {
 const AuthContext = React.createContext<
     | {
           user: User | null;
-          login: (form: AuthForm) => Promise<void>;
           register: (form: AuthForm) => Promise<void>;
+          login: (form: AuthForm) => Promise<void>;
           loginOut: () => Promise<void>;
       }
     | undefined
 >(undefined);
 AuthContext.displayName = "AuthContext";
 
-/**初始化user */
+/**初始化user */
 const bootstrapUser = async () => {
     let user = null;
     const token = auth.getToken();
     if (token) {
         const data = await http("me", { token });
-        return data.user;
-    } else {
-        return user;
+        user = data.user;
     }
+    return user;
 };
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const { run, data: user, setData: setUser, error, isLoading, isIdle, isError } = useAsync<User | null>();
@@ -58,9 +57,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
     //出现错误
     if (isError) {
-        return <FullPageErrorFallBack error={error} />;
+        return <FullPageErrorFallback error={error} />;
     }
-    return <AuthContext.Provider children={children} value={{ user, login, register, loginOut }}></AuthContext.Provider>;
+    return <AuthContext.Provider children={children} value={{ user, login, register, loginOut }} />;
 };
 
 export const useAuth = () => {

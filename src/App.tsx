@@ -1,18 +1,17 @@
-import { useAuth } from "context/authContext";
 import React from "react";
-import UnauthenticatedApp from "unauthenticatedApp";
-import AuthenticatedApp from "authenticatedApp";
 import "./App.css";
-import { ErrorBoundary } from "components/errorBoundaries";
-import { FullPageErrorFallBack } from "components/lib";
+import { useAuth } from "context/authContext";
+import { AuthenticatedApp } from "authenticatedApp";
+import { UnauthenticatedApp } from "unauthenticatedApp";
+import { ErrorBoundary } from "components/errorBoundary";
+import { FullPageErrorFallback } from "components/lib";
 
 function App() {
+    console.log("ss");
     const { user } = useAuth();
     return (
         <div className="App">
-            {/* {user ? <AuthenticatedApp /> : <UnauthenticatedApp />} */}
-            {/**ErrorBoundary为错误边界*/}
-            <ErrorBoundary fallbackRender={FullPageErrorFallBack}>{user ? <AuthenticatedApp /> : <UnauthenticatedApp />}</ErrorBoundary>
+            <ErrorBoundary fallbackRender={FullPageErrorFallback}>{user ? <AuthenticatedApp /> : <UnauthenticatedApp />}</ErrorBoundary>
         </div>
     );
 }
