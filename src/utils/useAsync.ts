@@ -28,6 +28,9 @@ export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defa
         ...defaultInitialState,
         ...initialState,
     });
+    //useState保存函数不能直接传入函数，直接传入函数的意义：惰性初始化会立即执行该函数,并把返回值传给retry
+    //setRetry时也会执行函数并返回所以也要加一层层
+    const [retry, setRetry] = useState(() => () => {});
     /**成功 */
     const setData = (data: D) => {
         setState({
@@ -44,11 +47,22 @@ export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defa
             data: null,
         });
     };
-    /**传入异步请求可以是useHttp里的请求，用来触发异步请求，并返回相关的请求信息*/
-    const run = (promise: Promise<D>) => {
+    /**
+     * 传入异步请求可以是useHttp里的请求，用来触发异步请求，并返回相关的请求信息,将相关信息赋值给state
+     * @param promise 异步请求后的promise
+     * @param runConfig run函数的配置参数
+     * @returns 返回一个promise
+     */
+    const run = (promise: Promise<D>, runConfig?: { retry: () => Promise<D> }) => {
         if (!promise || !promise.then) {
             throw new Error("请传入 promise 类型数据");
         }
+        //将每次的promise缓存起来
+        setRetry(() => () => {
+            if (runConfig?.retry) {
+                run(runConfig?.retry(), runConfig);
+            }
+        });
         setState({
             ...state,
             stat: "loading",
@@ -65,6 +79,9 @@ export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defa
                 return error;
             });
     };
+    /**刷新接口 重新执行run 刷新state*/
+    // const retry = () => {};
+
     return {
         isIdle: state.stat === "idle",
         isLoading: state.stat === "loading",
@@ -73,6 +90,7 @@ export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defa
         run,
         setData,
         setError,
+        retry,
         ...state,
     };
 };

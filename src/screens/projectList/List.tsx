@@ -3,6 +3,8 @@ import { User } from "./SearchPanel";
 import { Table, TableProps } from "antd";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
+import { Pin } from "components/pin";
+import { useEditProject } from "utils/useProjects";
 export interface Project {
     id: number;
     name: string;
@@ -15,15 +17,27 @@ export interface Project {
 //List新增users属性
 interface ListProps extends TableProps<Project> {
     users: User[];
+    refresh?: () => void;
 }
 //将传入的props先给users赋值，剩下的传给props
 function List({ users, ...props }: ListProps) {
+    const { mutate } = useEditProject();
+    //柯里化
+    const pinProject = (id: number) => (pin: boolean) => mutate({ id: id, pin }).then(props.refresh);
     return (
         <div>
             <Table
                 rowKey={"id"}
                 pagination={false}
                 columns={[
+                    {
+                        title() {
+                            return <Pin checked={true}></Pin>;
+                        },
+                        render(value, record) {
+                            return <Pin checked={record.pin} onCheckedChange={pinProject(record.id)}></Pin>;
+                        },
+                    },
                     {
                         title: "名称",
                         sorter: (a, b) => a.name.localeCompare(b.name),

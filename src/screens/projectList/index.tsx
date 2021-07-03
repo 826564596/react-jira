@@ -11,14 +11,14 @@ function ProjectListScreen() {
     useDocumentTitle("项目列表", false);
     const [param, setParam] = useProjectSearchParams();
     const debounceParam = useDebounce(param, 2000);
-    const { isLoading, error, data: list } = useProjects(debounceParam);
+    const { isLoading, error, data: list, retry } = useProjects(debounceParam);
     const { data: users } = useUsers();
     return (
         <Container>
             <h1>项目列表</h1>
             <SearchPanel param={param} setParam={setParam} users={users || []} />
             {error ? <Typography.Text type={"danger"}>{error.message}</Typography.Text> : null}
-            <List loading={isLoading} dataSource={list || []} users={users || []} />
+            <List refresh={retry} loading={isLoading} dataSource={list || []} users={users || []} />
         </Container>
     );
 }

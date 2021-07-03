@@ -7,10 +7,46 @@ import { useAsync } from "./useAsync";
 export const useProjects = (param?: Partial<Project>) => {
     const client = useHttp();
     const { run, ...result } = useAsync<Project[]>();
+    const fetchProjects = () => client(`projects`, { data: clearObject(param || {}) });
     //didUpdate
     useEffect(() => {
-        run(client(`projects`, { data: clearObject(param || {}) }));
+        run(fetchProjects(), { retry: fetchProjects });
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [param]);
     return result;
+};
+
+/**编辑project数据，不定义参数是为了让Hook再最外层使用,返回mutate让该函数可以在最内层调用 */
+export const useEditProject = () => {
+    const { run, ...asyncResult } = useAsync();
+    const client = useHttp();
+    const mutate = (params: Partial<Project>) => {
+        return run(
+            client(`projects/${params.id}`, {
+                data: params,
+                method: "PATCH",
+            })
+        );
+    };
+    return {
+        mutate,
+        ...asyncResult,
+    };
+};
+/**添加project数据，不定义参数是为了让Hook再最外层使用,返回mutate让该函数可以在最内层调用 */
+export const useAddProject = () => {
+    const { run, ...asyncResult } = useAsync();
+    const client = useHttp();
+    const mutate = (params: Partial<Project>) => {
+        return run(
+            client(`project/${params.id}`, {
+                data: params,
+                method: "POST",
+            })
+        );
+    };
+    return {
+        mutate,
+        ...asyncResult,
+    };
 };
