@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useMountedRef } from "utils";
 
 interface State<D> {
@@ -34,56 +34,57 @@ export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defa
     //setRetry时也会执行函数并返回所以也要加一层层
     const [retry, setRetry] = useState(() => () => {});
     /**成功 */
-    const setData = (data: D) => {
+    const setData = useCallback((data: D) => {
         setState({
             data: data,
             stat: "success",
             error: null,
         });
-    };
+    }, []);
     /**失败 */
-    const setError = (error: Error) => {
+    const setError = useCallback((error: Error) => {
         setState({
             error: error,
             stat: "error",
             data: null,
         });
-    };
+    }, []);
     /**
      * 传入异步请求可以是useHttp里的请求，用来触发异步请求，并返回相关的请求信息,将相关信息赋值给state
      * @param promise 异步请求后的promise
      * @param runConfig run函数的配置参数
      * @returns 返回一个promise
      */
-    const run = (promise: Promise<D>, runConfig?: { retry: () => Promise<D> }) => {
-        if (!promise || !promise.then) {
-            throw new Error("请传入 promise 类型数据");
-        }
-        //将每次的promise缓存起来
-        setRetry(() => () => {
-            if (runConfig?.retry) {
-                run(runConfig?.retry(), runConfig);
+    const run = useCallback(
+        (promise: Promise<D>, runConfig?: { retry: () => Promise<D> }) => {
+            if (!promise || !promise.then) {
+                throw new Error("请传入 promise 类型数据");
             }
-        });
-        setState({
-            ...state,
-            stat: "loading",
-        });
-        return promise
-            .then((data) => {
-                //如果组件挂载完成
-                if (mountedRef.current) setData(data);
-                return data;
-            })
-            .catch((error) => {
-                //catch会自动消化异常，如果不主动抛出异常，外面的catch是捕获不到异常的
-                setError(error);
-                if (config.throwOnError) return Promise.reject(error);
-                return error;
+            //将每次的promise缓存起来
+            setRetry(() => () => {
+                if (runConfig?.retry) {
+                    run(runConfig?.retry(), runConfig);
+                }
             });
-    };
-    /**刷新接口 重新执行run 刷新state*/
-    // const retry = () => {};
+            setState((prevState) => ({
+                ...prevState,
+                stat: "loading",
+            }));
+            return promise
+                .then((data) => {
+                    //如果组件挂载完成
+                    if (mountedRef.current) setData(data);
+                    return data;
+                })
+                .catch((error) => {
+                    //catch会自动消化异常，如果不主动抛出异常，外面的catch是捕获不到异常的
+                    setError(error);
+                    if (config.throwOnError) return Promise.reject(error);
+                    return error;
+                });
+        },
+        [config.throwOnError, mountedRef, setData, setError]
+    );
 
     return {
         isIdle: state.stat === "idle",
