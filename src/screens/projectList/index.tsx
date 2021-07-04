@@ -8,7 +8,7 @@ import { useUsers } from "utils/useUsers";
 import { useProjects } from "utils/useProjects";
 import { useProjectSearchParams } from "./utils";
 import { Row } from "components/lib";
-function ProjectListScreen(props: { setProjectModalOpen: (isOpen: boolean) => void }) {
+function ProjectListScreen(props: { projectButton: JSX.Element }) {
     useDocumentTitle("项目列表", false);
     const [param, setParam] = useProjectSearchParams();
     const debounceParam = useDebounce(param, 2000);
@@ -18,11 +18,11 @@ function ProjectListScreen(props: { setProjectModalOpen: (isOpen: boolean) => vo
         <Container>
             <Row between={true}>
                 <h1>项目列表</h1>
-                <Button onClick={() => props.setProjectModalOpen(true)}>创建项目</Button>
+                {props.projectButton}
             </Row>
             <SearchPanel param={param} setParam={setParam} users={users || []} />
             {error ? <Typography.Text type={"danger"}>{error.message}</Typography.Text> : null}
-            <List setProjectModalOpen={props.setProjectModalOpen} refresh={retry} loading={isLoading} dataSource={list || []} users={users || []} />
+            <List projectButton={props.projectButton} refresh={retry} loading={isLoading} dataSource={list || []} users={users || []} />
         </Container>
     );
 }

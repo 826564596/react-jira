@@ -16,7 +16,13 @@ export const AuthenticatedApp = () => {
     const [projectModalOpen, setProjectModalOpen] = useState(false);
     return (
         <Container>
-            <PageHeader setProjectModalOpen={setProjectModalOpen} />
+            <PageHeader
+                projectButton={
+                    <ButtonNoPadding onClick={() => setProjectModalOpen(true)} type={"link"}>
+                        创建项目
+                    </ButtonNoPadding>
+                }
+            />
             <Button
                 onClick={() => {
                     setProjectModalOpen(true);
@@ -27,7 +33,18 @@ export const AuthenticatedApp = () => {
             <Main>
                 <Router>
                     <Routes>
-                        <Route path={"/projects"} element={<ProjectListScreen setProjectModalOpen={setProjectModalOpen} />} />
+                        <Route
+                            path={"/projects"}
+                            element={
+                                <ProjectListScreen
+                                    projectButton={
+                                        <ButtonNoPadding onClick={() => setProjectModalOpen(true)} type={"link"}>
+                                            创建项目
+                                        </ButtonNoPadding>
+                                    }
+                                />
+                            }
+                        />
                         <Route path={"/projects/:projectId/*"} element={<ProjectScreen />} />
                         {/* 默认路由 */}
                         <Navigate to={"/projects"} />
@@ -45,14 +62,14 @@ export const AuthenticatedApp = () => {
 };
 
 /**公共的Header*/
-const PageHeader = (props: { setProjectModalOpen: (isOpen: boolean) => void }) => {
+const PageHeader = (props: { projectButton: JSX.Element }) => {
     return (
         <Header between={true}>
             <HeaderLeft gap={true}>
                 <ButtonNoPadding type={"link"} onClick={() => resetRoute()}>
                     <SoftwareLogo width={"18rem"} color={"rgb(38,132,255)"} />
                 </ButtonNoPadding>
-                <ProjectPopover setProjectModalOpen={props.setProjectModalOpen} />
+                <ProjectPopover {...props} />
                 <span>用户</span>
             </HeaderLeft>
             <HeaderRight>

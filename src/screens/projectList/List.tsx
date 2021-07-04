@@ -20,7 +20,7 @@ export interface Project {
 interface ListProps extends TableProps<Project> {
     users: User[];
     refresh?: () => void;
-    setProjectModalOpen: (isOpen: boolean) => void;
+    projectButton: JSX.Element;
 }
 //将传入的props先给users赋值，剩下的传给props
 function List({ users, ...props }: ListProps) {
@@ -71,9 +71,10 @@ function List({ users, ...props }: ListProps) {
                                     overlay={
                                         <Menu>
                                             <Menu.Item key={"edit"}>
-                                                <ButtonNoPadding type={"link"} onClick={() => props.setProjectModalOpen(true)}>
+                                                {props.projectButton}
+                                                {/* <ButtonNoPadding type={"link"} onClick={() => props.setProjectModalOpen(true)}>
                                                     编辑
-                                                </ButtonNoPadding>
+                                                </ButtonNoPadding> */}
                                             </Menu.Item>
                                         </Menu>
                                     }
