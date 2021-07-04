@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useReducer, useState } from "react";
 import { useMountedRef } from "utils";
 
 interface State<D> {
@@ -17,38 +17,55 @@ const defaultConfig = {
     throwOnError: false, //用于判断是否需要主动抛出异常
 };
 
+const useSafeDispatch = <T>(dispatch: (...args: T[]) => void) => {
+    const mountedRef = useMountedRef();
+    return useCallback(
+        (...args: T[]) => {
+            return mountedRef.current ? dispatch(...args) : void 0;
+        },
+        [mountedRef, dispatch]
+    );
+};
+
 /**
  * 用于数据的异步请求
  * @param initialState
  * @param initialConfig 初始化的配置项
  * @returns
  */
+
 export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defaultConfig) => {
     const config = { ...defaultConfig, ...initialConfig };
-    const [state, setState] = useState<State<D>>({
+    const [state, dispatch] = useReducer((state: State<D>, action: Partial<State<D>>) => ({ ...state, ...action }), {
         ...defaultInitialState,
         ...initialState,
     });
-    const mountedRef = useMountedRef();
+    const safeDispatch = useSafeDispatch(dispatch);
     //useState保存函数不能直接传入函数，直接传入函数的意义：惰性初始化会立即执行该函数,并把返回值传给retry
     //setRetry时也会执行函数并返回所以也要加一层层
     const [retry, setRetry] = useState(() => () => {});
     /**成功 */
-    const setData = useCallback((data: D) => {
-        setState({
-            data: data,
-            stat: "success",
-            error: null,
-        });
-    }, []);
+    const setData = useCallback(
+        (data: D) => {
+            safeDispatch({
+                data: data,
+                stat: "success",
+                error: null,
+            });
+        },
+        [safeDispatch]
+    );
     /**失败 */
-    const setError = useCallback((error: Error) => {
-        setState({
-            error: error,
-            stat: "error",
-            data: null,
-        });
-    }, []);
+    const setError = useCallback(
+        (error: Error) => {
+            safeDispatch({
+                error: error,
+                stat: "error",
+                data: null,
+            });
+        },
+        [safeDispatch]
+    );
     /**
      * 传入异步请求可以是useHttp里的请求，用来触发异步请求，并返回相关的请求信息,将相关信息赋值给state
      * @param promise 异步请求后的promise
@@ -66,14 +83,13 @@ export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defa
                     run(runConfig?.retry(), runConfig);
                 }
             });
-            setState((prevState) => ({
-                ...prevState,
+            safeDispatch({
                 stat: "loading",
-            }));
+            });
             return promise
                 .then((data) => {
                     //如果组件挂载完成
-                    if (mountedRef.current) setData(data);
+                    setData(data);
                     return data;
                 })
                 .catch((error) => {
@@ -83,7 +99,7 @@ export const useAsync = <D>(initialState?: State<D>, initialConfig?: typeof defa
                     return error;
                 });
         },
-        [config.throwOnError, mountedRef, setData, setError]
+        [config.throwOnError, setData, safeDispatch, setError]
     );
 
     return {

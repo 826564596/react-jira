@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import { Divider, List, Popover, Typography } from "antd";
 import React from "react";
 import { useProjects } from "utils/useProjects";
-import { ButtonNoPadding } from "./lib";
 export const ProjectPopover = (props: { projectButton: JSX.Element }) => {
     const { data: projects, isLoading } = useProjects();
     const pinnedProjects = projects?.filter((project) => project.pin);

@@ -5,7 +5,6 @@ import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import { Pin } from "components/pin";
 import { useEditProject } from "utils/useProjects";
-import { link } from "fs";
 import { ButtonNoPadding } from "components/lib";
 export interface Project {
     id: number;
