@@ -1,9 +1,12 @@
 import styled from "@emotion/styled";
-import { Spin, Typography } from "antd";
+import { Button, Spin, Typography } from "antd";
 import { DevTools } from "jira-dev-tool";
+/**
+ *
+ */
 export const Row = styled.div<{
-    gap?: number | boolean;
-    between?: boolean;
+    gap?: number | boolean; //
+    between?: boolean; //是否是 justify-content:between
     marginBottom?: number;
 }>`
     display: flex;
@@ -32,6 +35,11 @@ export const FullPageErrorFallback = ({ error }: { error: Error | null }) => {
         </FullPage>
     );
 };
+
+export const ButtonNoPadding = styled(Button)`
+    padding: 0;
+`;
+
 const FullPage = styled.div`
     height: 100vh;
     display: flex;
