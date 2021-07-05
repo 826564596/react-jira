@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import { Pin } from "components/pin";
 import { useEditProject } from "utils/useProjects";
 import { ButtonNoPadding } from "components/lib";
+import { useDispatch } from "react-redux";
+import { projectListActions } from "./projectListSlice";
 export interface Project {
     id: number;
     name: string;
@@ -19,11 +21,12 @@ export interface Project {
 interface ListProps extends TableProps<Project> {
     users: User[];
     refresh?: () => void;
-    projectButton: JSX.Element;
+    // projectButton: JSX.Element;
 }
 //将传入的props先给users赋值，剩下的传给props
 function List({ users, ...props }: ListProps) {
     const { mutate } = useEditProject();
+    const dispatch = useDispatch();
     //柯里化
     const pinProject = (id: number) => (pin: boolean) => mutate({ id: id, pin }).then(props.refresh);
     return (
@@ -70,10 +73,9 @@ function List({ users, ...props }: ListProps) {
                                     overlay={
                                         <Menu>
                                             <Menu.Item key={"edit"}>
-                                                {props.projectButton}
-                                                {/* <ButtonNoPadding type={"link"} onClick={() => props.setProjectModalOpen(true)}>
+                                                <ButtonNoPadding type={"link"} onClick={() => dispatch(projectListActions.openProjectModal())}>
                                                     编辑
-                                                </ButtonNoPadding> */}
+                                                </ButtonNoPadding>
                                             </Menu.Item>
                                         </Menu>
                                     }

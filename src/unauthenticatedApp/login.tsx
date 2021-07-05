@@ -3,6 +3,7 @@ import { useAuth } from "context/authContext";
 import { Form, Input } from "antd";
 import { LongButton } from "unauthenticatedApp";
 import { useAsync } from "utils/useAsync";
+import { useDispatch } from "react-redux";
 interface LoginScreenProps {
     onError: (error: Error) => void;
 }
