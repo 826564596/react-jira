@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import LoginScreen from "unauthenticatedApp/login";
 import RegisterScreen from "unauthenticatedApp/register";
-import { Button, Card, Divider, Typography } from "antd";
+import { Button, Card, Divider } from "antd";
 import styled from "@emotion/styled";
 import logo from "assets/logo.svg";
 import left from "assets/left.svg";
 import right from "assets/right.svg";
 // import { Helmet } from "react-helmet";
 import { useDocumentTitle } from "utils";
+import { ErrorBox } from "components/lib";
 /**未登录页面 包括注册登录页面 */
 export const UnauthenticatedApp = () => {
     const [isRegister, setIsRegister] = useState(false);
@@ -19,7 +20,7 @@ export const UnauthenticatedApp = () => {
             <Background />
             <ShadowCard>
                 <Title>{isRegister ? "请注册" : "请登录"}</Title>
-                {error ? <Typography.Text type={"danger"}>{error.message}</Typography.Text> : null}
+                <ErrorBox error={error} />
                 {isRegister ? <RegisterScreen onError={setError} /> : <LoginScreen onError={setError} />}
                 {/**分割线 */}
                 <Divider />

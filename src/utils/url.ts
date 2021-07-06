@@ -4,7 +4,7 @@ import { clearObject } from "utils";
 
 /**返回页面的url 指定键的参数值 */
 export const useUrlQueryParam = <T extends string>(keys: T[]) => {
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams(); //获取url中的Params
     return [
         //使用useMemo将reduce第一次返回的对象缓存起来，让useEffect更新时的依赖不变，否则会无限循环
         useMemo(() => {

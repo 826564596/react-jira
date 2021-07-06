@@ -7,7 +7,7 @@ type SelectProps = React.ComponentProps<typeof Select>;
 //继承SelectProps中的属性，Omit<SelectProps, "value" | "onChange" | "options">删除相同的使用项
 interface idSelectProps extends Omit<SelectProps, "value" | "onChange" | "options"> {
     value?: Raw | null | undefined; //option的value值
-    onChange: (value?: number) => void; //change函数
+    onChange?: (value?: number) => void; //change函数
     defaultOptionName?: string; //第一项的默认值
     options?: { name: string; id: number }[]; //要遍历的数组
 }
@@ -24,7 +24,7 @@ export const IdSelect = (props: idSelectProps) => {
         <Select
             value={options?.length ? toNumber(value) : 0}
             onChange={(value) => {
-                return onChange(toNumber(value) || undefined);
+                return onChange?.(toNumber(value) || undefined);
             }}
             {...restProps} //将Select中原先所有props封装到该组件里
         >

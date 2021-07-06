@@ -1,51 +1,52 @@
-import { useCallback, useEffect } from "react";
 import { Project } from "screens/projectList/list";
 import { clearObject } from "utils";
 import { useHttp } from "./http";
-import { useAsync } from "./useAsync";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 /**获取项目列表的hook */
 export const useProjects = (param?: Partial<Project>) => {
     const client = useHttp();
-    const { run, ...result } = useAsync<Project[]>();
-    const fetchProjects = useCallback(() => client(`projects`, { data: clearObject(param || {}) }), [client, param]);
-    //didUpdate
-    useEffect(() => {
-        run(fetchProjects(), { retry: fetchProjects });
-    }, [param, run, fetchProjects]);
-    return result;
+    return useQuery<Project[], Error>(["projects", param], () => client(`projects`, { data: clearObject(param || {}) }));
 };
 
 /**编辑project数据，不定义参数是为了让Hook再最外层使用,返回mutate让该函数可以在最内层调用 */
 export const useEditProject = () => {
-    const { run, ...asyncResult } = useAsync();
     const client = useHttp();
-    const mutate = (params: Partial<Project>) => {
-        return run(
+    const queryClient = useQueryClient();
+    return useMutation(
+        (params: Partial<Project>) =>
             client(`projects/${params.id}`, {
                 data: params,
                 method: "PATCH",
-            })
-        );
-    };
-    return {
-        mutate,
-        ...asyncResult,
-    };
+            }),
+        {
+            onSuccess: () => queryClient.invalidateQueries("projects"),
+        }
+    );
 };
 /**添加project数据，不定义参数是为了让Hook再最外层使用,返回mutate让该函数可以在最内层调用 */
 export const useAddProject = () => {
-    const { run, ...asyncResult } = useAsync();
     const client = useHttp();
-    const mutate = (params: Partial<Project>) => {
-        return run(
-            client(`project/${params.id}`, {
+    const queryClient = useQueryClient();
+    return useMutation(
+        (params: Partial<Project>) =>
+            client(`projects`, {
                 data: params,
                 method: "POST",
-            })
-        );
-    };
-    return {
-        mutate,
-        ...asyncResult,
-    };
+            }),
+        {
+            onSuccess: () => queryClient.invalidateQueries("projects"),
+        }
+    );
+};
+
+/**
+ * 获取项目的详情
+ * @param id 项目的id
+ */
+export const useProject = (id?: number) => {
+    const client = useHttp();
+    const a = useQuery<Project>(["project", { id }], () => client(`projects/${id}`), {
+        enabled: Boolean(id),
+    });
+    return a;
 };

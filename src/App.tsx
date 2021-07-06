@@ -7,7 +7,6 @@ import { ErrorBoundary } from "components/errorBoundary";
 import { FullPageErrorFallback } from "components/lib";
 
 function App() {
-    console.log("ss");
     const { user } = useAuth();
     return (
         <div className="App">

@@ -19,15 +19,15 @@ export interface Project {
 //List新增users属性
 interface ListProps extends TableProps<Project> {
     users: User[];
-    refresh?: () => void;
 }
 //将传入的props先给users赋值，剩下的传给props
 function List({ users, ...props }: ListProps) {
     const { mutate } = useEditProject();
-    const { open } = useProjectModal();
+    const { open, startEdit } = useProjectModal();
 
     //柯里化
-    const pinProject = (id: number) => (pin: boolean) => mutate({ id: id, pin }).then(props.refresh);
+    const pinProject = (id: number) => (pin: boolean) => mutate({ id: id, pin });
+    const editProject = (id: number) => startEdit(id);
     return (
         <div>
             <Table
@@ -71,11 +71,11 @@ function List({ users, ...props }: ListProps) {
                                 <Dropdown
                                     overlay={
                                         <Menu>
-                                            <Menu.Item key={"edit"}>
-                                                {/* {props.projectButton} */}
-                                                <ButtonNoPadding type={"link"} onClick={() => open()}>
-                                                    编辑
-                                                </ButtonNoPadding>
+                                            <Menu.Item key={"edit"} onClick={() => editProject(record.id)}>
+                                                编辑
+                                            </Menu.Item>
+                                            <Menu.Item key={"delete"} onClick={() => open()}>
+                                                删除
                                             </Menu.Item>
                                         </Menu>
                                     }

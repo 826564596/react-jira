@@ -14,7 +14,7 @@ export const ProjectPopover = () => {
             <List>
                 {pinnedProjects?.map((project) => {
                     return (
-                        <List.Item>
+                        <List.Item key={project.id}>
                             <List.Item.Meta title={project.name} />
                         </List.Item>
                     );
