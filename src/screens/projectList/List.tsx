@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { User } from "./searchPanel";
-import { Dropdown, Menu, Table, TableProps } from "antd";
+import { Dropdown, Menu, Modal, Table, TableProps } from "antd";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 import { Pin } from "components/pin";
-import { useEditProject } from "utils/useProjects";
+import { useDeleteProject, useEditProject } from "utils/useProjects";
 import { ButtonNoPadding } from "components/lib";
-import { useProjectModal } from "./utils";
+import { useProjectModal, useProjectQueryKey } from "./utils";
 export interface Project {
     id: number;
     name: string;
@@ -22,16 +22,29 @@ interface ListProps extends TableProps<Project> {
 }
 //将传入的props先给users赋值，剩下的传给props
 function List({ users, ...props }: ListProps) {
-    const { mutate } = useEditProject();
+    const { mutate } = useEditProject(useProjectQueryKey());
+    const { mutate: deleteProject } = useDeleteProject(useProjectQueryKey());
+
     const { open, startEdit } = useProjectModal();
 
     //柯里化
     const pinProject = (id: number) => (pin: boolean) => mutate({ id: id, pin });
     const editProject = (id: number) => startEdit(id);
+    const comfirmDeleteProject = (id: number) => {
+        Modal.confirm({
+            title: "确定删除这个项目吗？",
+            content: "点击确定删除",
+            okText: "确定",
+            cancelText: "取消",
+            onOk() {
+                deleteProject({ id });
+            },
+        });
+    };
     return (
         <div>
             <Table
-                rowKey={"id"}
+                // rowKey={(record) => record.id}
                 pagination={false}
                 columns={[
                     {
@@ -74,7 +87,7 @@ function List({ users, ...props }: ListProps) {
                                             <Menu.Item key={"edit"} onClick={() => editProject(record.id)}>
                                                 编辑
                                             </Menu.Item>
-                                            <Menu.Item key={"delete"} onClick={() => open()}>
+                                            <Menu.Item key={"delete"} onClick={() => comfirmDeleteProject(record.id)}>
                                                 删除
                                             </Menu.Item>
                                         </Menu>

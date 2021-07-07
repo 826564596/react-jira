@@ -5,11 +5,11 @@ import { UserSelect } from "components/userSelect";
 import React from "react";
 import { useEffect } from "react";
 import { useAddProject, useEditProject } from "utils/useProjects";
-import { useProjectModal } from "./utils";
+import { useProjectModal, useProjectQueryKey } from "./utils";
 export const ProjectModal = () => {
     const { projectModalOpen, close, editingProject, isLoading } = useProjectModal();
     const useMutateProject = editingProject ? useEditProject : useAddProject;
-    const { mutateAsync, error, isLoading: mutateLoading } = useMutateProject();
+    const { mutateAsync, error, isLoading: mutateLoading } = useMutateProject(useProjectQueryKey());
     const [form] = Form.useForm();
     /**表单提交 */
     const onFinish = (values: any) => {

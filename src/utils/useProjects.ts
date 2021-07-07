@@ -1,7 +1,9 @@
 import { Project } from "screens/projectList/list";
 import { clearObject } from "utils";
 import { useHttp } from "./http";
-import { useQuery, useMutation, useQueryClient } from "react-query";
+import { useQuery, useMutation, useQueryClient, QueryKey } from "react-query";
+import { useProjectSearchParams } from "screens/projectList/utils";
+import { useAddConfig, useDeleteConfig, useEditConfig } from "./useOptimisticOptions";
 /**获取项目列表的hook */
 export const useProjects = (param?: Partial<Project>) => {
     const client = useHttp();
@@ -9,44 +11,47 @@ export const useProjects = (param?: Partial<Project>) => {
 };
 
 /**编辑project数据，不定义参数是为了让Hook再最外层使用,返回mutate让该函数可以在最内层调用 */
-export const useEditProject = () => {
+export const useEditProject = (queryKey: QueryKey) => {
     const client = useHttp();
-    const queryClient = useQueryClient();
     return useMutation(
         (params: Partial<Project>) =>
             client(`projects/${params.id}`, {
                 data: params,
                 method: "PATCH",
             }),
-        {
-            onSuccess: () => queryClient.invalidateQueries("projects"),
-        }
+        useEditConfig(queryKey)
     );
 };
 /**添加project数据，不定义参数是为了让Hook再最外层使用,返回mutate让该函数可以在最内层调用 */
-export const useAddProject = () => {
+export const useAddProject = (queryKey: QueryKey) => {
     const client = useHttp();
-    const queryClient = useQueryClient();
     return useMutation(
         (params: Partial<Project>) =>
             client(`projects`, {
                 data: params,
                 method: "POST",
             }),
-        {
-            onSuccess: () => queryClient.invalidateQueries("projects"),
-        }
+        useAddConfig(queryKey)
     );
 };
-
+/**删除project */
+export const useDeleteProject = (queryKey: QueryKey) => {
+    const client = useHttp();
+    return useMutation(
+        ({ id }: { id: number }) =>
+            client(`projects/${id}`, {
+                method: "DELETE",
+            }),
+        useDeleteConfig(queryKey)
+    );
+};
 /**
  * 获取项目的详情
  * @param id 项目的id
  */
 export const useProject = (id?: number) => {
     const client = useHttp();
-    const a = useQuery<Project>(["project", { id }], () => client(`projects/${id}`), {
+    return useQuery<Project>(["project", { id }], () => client(`projects/${id}`), {
         enabled: Boolean(id),
     });
-    return a;
 };
