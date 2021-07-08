@@ -4,7 +4,8 @@ import { clearObject } from "utils";
 
 /**返回页面的url 指定键的参数值 */
 export const useUrlQueryParam = <T extends string>(keys: T[]) => {
-    const [searchParams, setSearchParams] = useSearchParams(); //获取url中的Params
+    const [searchParams] = useSearchParams(); //获取url中的Params
+    const setSearchParams = useSetUrlSearchParams();
     return [
         //使用useMemo将reduce第一次返回的对象缓存起来，让useEffect更新时的依赖不变，否则会无限循环
         useMemo(() => {
@@ -16,10 +17,15 @@ export const useUrlQueryParam = <T extends string>(keys: T[]) => {
             //eslint-disable-next-line react-hooks/exhaustive-deps
         }, [searchParams]),
         (params: Partial<{ [key in T]: unknown }>) => {
-            //Object.fromEntries 把键值对列表转换成对象
-            const o = clearObject({ ...Object.fromEntries(searchParams), ...params }) as URLSearchParamsInit;
-            //通过input输入参数 将参数更新到url里
-            return setSearchParams(o);
+            return setSearchParams(params);
         },
     ] as const; //返回tuple类型，里面的子类型不一样的时候要使用as const
+};
+export const useSetUrlSearchParams = () => {
+    const [searchParams, setSearchParams] = useSearchParams(); //获取url中的Params
+    return (params: { [key in string]: unknown }) => {
+        const o = clearObject({ ...Object.fromEntries(searchParams), ...params }) as URLSearchParamsInit;
+        //通过input输入参数 将参数更新到url里
+        return setSearchParams(o);
+    };
 };

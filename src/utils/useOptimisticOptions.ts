@@ -7,17 +7,32 @@ import { QueryKey, useQueryClient } from "react-query";
 export const useConfig = (queryKey: QueryKey, callback: (target: any, old?: any[]) => any[]) => {
     const queryClient = useQueryClient();
     return {
-        onSuccess: () => queryClient.invalidateQueries(queryKey),
         //会在上面useMutation发生就调用
         async onMutate(target: any) {
+            console.log(target);
+            console.log("onMutate");
+            //保存前一个值
             const previousItems = queryClient.getQueryData(queryKey);
+            //对比乐观更新为新值
             queryClient.setQueryData(queryKey, (old?: any[]) => {
+                // console.log(old)
                 return callback(target, old);
             });
+            //返回前一个值，可以用于失败回滚，保存到context中
             return { previousItems };
         },
+        onSuccess: (data: any, variables: any, context: any) => {
+            console.log("onSuccess");
+            console.log(data);
+            console.log(variables);
+            console.log(context);
+        },
         onError(error: any, newItem: any, context: any) {
+            //api请求失败，从context中获取旧值，回滚
             queryClient.setQueryData(queryKey, context.previousItems);
+        },
+        onSettled() {
+            queryClient.invalidateQueries(queryKey);
         },
     };
 };
@@ -31,8 +46,8 @@ export const useDeleteConfig = (queryKey: QueryKey) => {
 /**mutation的编辑配置 */
 export const useEditConfig = (queryKey: QueryKey) => {
     return useConfig(queryKey, (target, old) => {
-        const a = old?.map((item) => (target.id !== item.id ? { ...item, ...target } : item));
-        return a || [];
+        const array = old?.map((item) => (target.id !== item.id ? { ...item, ...target } : item));
+        return array || [];
     });
 };
 /**mutation的添加配置 */

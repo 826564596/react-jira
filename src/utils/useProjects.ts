@@ -7,7 +7,13 @@ import { useAddConfig, useDeleteConfig, useEditConfig } from "./useOptimisticOpt
 /**获取项目列表的hook */
 export const useProjects = (param?: Partial<Project>) => {
     const client = useHttp();
+
     return useQuery<Project[], Error>(["projects", param], () => client(`projects`, { data: clearObject(param || {}) }));
+};
+
+export const useText = (param?: Partial<Project>) => {
+    const client = useHttp();
+    return useQuery<Project[], Error>(["test", 5], () => client(`projects/1`));
 };
 
 /**编辑project数据，不定义参数是为了让Hook再最外层使用,返回mutate让该函数可以在最内层调用 */
