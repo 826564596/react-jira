@@ -57,7 +57,6 @@ const undoReducer = <T>(state: State<T>, action: Aciton<T>) => {
             };
         }
     }
-    return state;
 };
 
 export const useUndo = <T>(initialPresent: T) => {

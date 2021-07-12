@@ -4,7 +4,7 @@ import List from "./list";
 import { useDebounce, useDocumentTitle } from "../../utils";
 import styled from "@emotion/styled";
 import { useUsers } from "utils/useUsers";
-import { useProjects, useText } from "utils/useProjects";
+import { useProjects } from "utils/useProjects";
 import { useProjectModal, useProjectSearchParams } from "./utils";
 import { ButtonNoPadding, ErrorBox, Row } from "components/lib";
 function ProjectListScreen() {
@@ -14,7 +14,6 @@ function ProjectListScreen() {
     const debounceParam = useDebounce(param, 2000);
     const { isLoading, error, data: list } = useProjects(debounceParam);
 
-    const { data } = useText();
     const { data: users } = useUsers();
     return (
         <Container>

@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { User } from "./searchPanel";
+import React from "react";
 import { Dropdown, Menu, Modal, Table, TableProps } from "antd";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
@@ -7,14 +6,9 @@ import { Pin } from "components/pin";
 import { useDeleteProject, useEditProject } from "utils/useProjects";
 import { ButtonNoPadding } from "components/lib";
 import { useProjectModal, useProjectQueryKey } from "./utils";
-export interface Project {
-    id: number;
-    name: string;
-    personId: number;
-    pin: boolean;
-    organization: string;
-    created: number;
-}
+import { Project } from "types/project";
+import { User } from "types/user";
+
 //这样可以将Table里的所有属性暴露给List,通过在使用List的时候传Table的属性就可以了
 //List新增users属性
 interface ListProps extends TableProps<Project> {
@@ -24,8 +18,7 @@ interface ListProps extends TableProps<Project> {
 function List({ users, ...props }: ListProps) {
     const { mutate } = useEditProject(useProjectQueryKey());
     const { mutate: deleteProject } = useDeleteProject(useProjectQueryKey());
-
-    const { open, startEdit } = useProjectModal();
+    const { startEdit } = useProjectModal();
 
     //柯里化
     const pinProject = (id: number) => (pin: boolean) => mutate({ id: id, pin });
@@ -104,4 +97,5 @@ function List({ users, ...props }: ListProps) {
         </div>
     );
 }
+
 export default List;

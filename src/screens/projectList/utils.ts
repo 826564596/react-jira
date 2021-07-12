@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { useSetUrlSearchParams, useUrlQueryParam } from "utils/url";
 import { useProject } from "utils/useProjects";
-import { useSearchParams } from "react-router-dom";
 /**项目列表搜索的参数 */
 export const useProjectSearchParams = () => {
     const [param, setParam] = useUrlQueryParam(["name", "personId"]);

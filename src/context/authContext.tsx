@@ -1,10 +1,11 @@
 import React, { ReactNode } from "react";
 import * as auth from "authProvider";
-import { User } from "screens/projectList/searchPanel";
 import { http } from "utils/http";
 import { useMount } from "utils";
 import { useAsync } from "utils/useAsync";
+import { useQueryClient } from "react-query";
 import { FullPageErrorFallback, FullPageLoading } from "components/lib";
+import { User } from "types/user";
 interface AuthForm {
     username: string;
     password: string;
@@ -32,6 +33,7 @@ const bootstrapUser = async () => {
 };
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const { run, data: user, setData: setUser, error, isLoading, isIdle, isError } = useAsync<User | null>();
+    const queryClient = useQueryClient();
     const login = (form: AuthForm) => {
         return auth.login(form).then((res) => {
             setUser(res);
@@ -45,6 +47,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const loginOut = () => {
         return auth.loginOut().then((res) => {
             setUser(null);
+            //登出的时候清除所有queryClient缓存的数据
+            queryClient.clear();
         });
     };
     //初始化更新时候调用

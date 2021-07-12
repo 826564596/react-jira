@@ -1,9 +1,8 @@
-import { Project } from "screens/projectList/list";
 import { clearObject } from "utils";
 import { useHttp } from "./http";
-import { useQuery, useMutation, useQueryClient, QueryKey } from "react-query";
-import { useProjectSearchParams } from "screens/projectList/utils";
+import { useQuery, useMutation, QueryKey } from "react-query";
 import { useAddConfig, useDeleteConfig, useEditConfig } from "./useOptimisticOptions";
+import { Project } from "types/project";
 /**获取项目列表的hook */
 export const useProjects = (param?: Partial<Project>) => {
     const client = useHttp();
