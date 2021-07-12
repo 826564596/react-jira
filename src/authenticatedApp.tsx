@@ -71,9 +71,10 @@ const User = () => {
 };
 
 const Container = styled.div`
+    display: grid;
+    grid-template-rows: 6rem 1fr;
     height: 100vh;
 `;
-
 // const Container = styled.div`
 //     display: grid;
 //     grid-template-rows: 6rem 1fr 6rem; /**高 */
@@ -87,7 +88,6 @@ const Container = styled.div`
 // `;
 
 const Header = styled(Row)`
-    grid-area: header;
     padding: 3.2rem;
     box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
     z-index: 1;
@@ -96,14 +96,7 @@ const HeaderLeft = styled(Row)``;
 const HeaderRight = styled.div``;
 
 const Main = styled.main`
-    grid-area: main;
+    /* display: flex; */
+    display: flex;
+    overflow: hidden;
 `;
-// const Nav = styled.nav`
-//     grid-area: nav;
-// `;
-// const Aside = styled.aside`
-//     grid-area: aside;
-// `;
-// const Footer = styled.footer`
-//     grid-area: footer;
-// `;
