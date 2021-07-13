@@ -34,7 +34,7 @@ export const ProjectScreen = () => {
         </Container>
     );
 };
-
+ProjectScreen.whyDidYouRender = true;
 const Aside = styled.aside`
     background-color: rgb(244, 245, 247);
     display: flex;
@@ -42,10 +42,12 @@ const Aside = styled.aside`
 
 const Main = styled.div`
     display: flex;
+    overflow: hidden;
     box-shadow: -5px 0 5px -5px rgba(0, 0, 0, 0.1);
 `;
 
 const Container = styled.div`
     display: grid;
+    overflow: hidden;
     grid-template-columns: 16rem 1fr;
 `;

@@ -1,5 +1,7 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useLocation } from "react-router";
+import { useDebounce } from "utils";
+import { useTask } from "utils/task";
 import { useUrlQueryParam } from "utils/url";
 import { useProject } from "utils/useProjects";
 
@@ -17,11 +19,13 @@ export const useProjectInUrl = () => {
 
 export const useKanbanSearchParams = () => ({ projectId: useProjectIdInUrl() });
 
+/**kanban的queryKey */
 export const useKanbanQuerykey = () => ["kanbans", useKanbanSearchParams()];
 
-export const useTaskSearchParams = () => {
+export const useTasksSearchParams = () => {
     const [param, setParam] = useUrlQueryParam(["name", "typeId", "processorId", "tagId"]);
     const projectId = useProjectIdInUrl();
+
     return useMemo(() => {
         return {
             projectId: projectId,
@@ -32,4 +36,30 @@ export const useTaskSearchParams = () => {
         };
     }, [projectId, param]);
 };
-export const useTaskQueryKey = () => ["tasks", useTaskSearchParams()];
+/**task的query缓存 */
+export const useTasksQueryKey = () => ["tasks", useTasksSearchParams()];
+
+/**管理modal的状态 */
+export const useTasksModal = () => {
+    const [{ editingTaskId }, setEditingTaskId] = useUrlQueryParam(["editingTaskId"]);
+    //获取当前点击的Task数据
+    const { data: editingTask, isLoading } = useTask(Number(editingTaskId));
+    /**打开modal */
+    const startEdit = useCallback(
+        (id: number) => {
+            setEditingTaskId({ editingTaskId: id });
+        },
+        [setEditingTaskId]
+    );
+    /**关闭modal */
+    const close = useCallback(() => {
+        setEditingTaskId({ editingTaskId: "" });
+    }, [setEditingTaskId]);
+    return {
+        editingTaskId,
+        editingTask,
+        startEdit,
+        close,
+        isLoading,
+    };
+};

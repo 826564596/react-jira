@@ -9,8 +9,6 @@ export const useConfig = (queryKey: QueryKey, callback: (target: any, old?: any[
     return {
         //会在上面useMutation发生就调用
         async onMutate(target: any) {
-            console.log(target);
-            console.log("onMutate");
             //保存前一个值
             const previousItems = queryClient.getQueryData(queryKey);
             //对比乐观更新为新值
@@ -23,9 +21,6 @@ export const useConfig = (queryKey: QueryKey, callback: (target: any, old?: any[
         },
         onSuccess: (data: any, variables: any, context: any) => {
             console.log("onSuccess");
-            console.log(data);
-            console.log(variables);
-            console.log(context);
         },
         onError(error: any, newItem: any, context: any) {
             //api请求失败，从context中获取旧值，回滚
@@ -46,7 +41,7 @@ export const useDeleteConfig = (queryKey: QueryKey) => {
 /**mutation的编辑配置 */
 export const useEditConfig = (queryKey: QueryKey) => {
     return useConfig(queryKey, (target, old) => {
-        const array = old?.map((item) => (target.id !== item.id ? { ...item, ...target } : item));
+        const array = old?.map((item) => (target.id === item.id ? { ...item, ...target } : item));
         return array || [];
     });
 };

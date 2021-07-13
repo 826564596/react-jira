@@ -5,9 +5,9 @@ import { TaskTypeSelect } from "components/taskTypeSelect";
 import { UserSelect } from "components/userSelect";
 import React from "react";
 import { useSetUrlSearchParams } from "utils/url";
-import { useTaskSearchParams } from "./util";
+import { useTasksSearchParams } from "./util";
 export const SearchPanel = () => {
-    const searchParams = useTaskSearchParams();
+    const searchParams = useTasksSearchParams();
     const setSearchParams = useSetUrlSearchParams();
     const reset = () => {
         setSearchParams({
@@ -19,7 +19,7 @@ export const SearchPanel = () => {
     };
     return (
         <Row marginBottom={4} gap={true}>
-            <Input style={{ width: "10rem" }} placeholder={"任务名称"} value={searchParams.name} onChange={(evt) => setSearchParams({ name: evt.target.value })}></Input>
+            <Input style={{ width: "20rem" }} placeholder={"任务名称"} value={searchParams.name} onChange={(evt) => setSearchParams({ name: evt.target.value })}></Input>
             <UserSelect
                 defaultOptionName={"经办人"}
                 value={searchParams.processorId}
