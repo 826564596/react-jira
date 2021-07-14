@@ -1,8 +1,9 @@
 import { Task } from "types/task";
 import { useHttp } from "./http";
 import { useQuery, QueryKey, useMutation } from "react-query";
-import { useAddConfig, useDeleteConfig, useEditConfig } from "./useOptimisticOptions";
+import { useAddConfig, useDeleteConfig, useEditConfig, useReorderTaskConfig } from "./useOptimisticOptions";
 import { useDebounce } from "utils";
+import { SortProps } from "./kanban";
 
 /**获取任务列表Hook */
 export const useTasks = (param?: Partial<Task>) => {
@@ -59,4 +60,15 @@ export const useDeleteTask = (queryKey: QueryKey) => {
             }),
         useDeleteConfig(queryKey)
     );
+};
+
+/**看板下的task排序 */
+export const useReorderTask = (queryKey: QueryKey) => {
+    const client = useHttp();
+    return useMutation((params: SortProps) => {
+        return client(`tasks/reorder`, {
+            data: params,
+            method: "POST",
+        });
+    }, useReorderTaskConfig(queryKey));
 };

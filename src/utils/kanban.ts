@@ -1,7 +1,7 @@
 import { Kanban } from "types/kanban";
 import { useHttp } from "./http";
 import { useQuery, useMutation, QueryKey } from "react-query";
-import { useAddConfig, useDeleteConfig } from "./useOptimisticOptions";
+import { useAddConfig, useDeleteConfig, useReorderKanbanConfig } from "./useOptimisticOptions";
 
 /**获取看板列表Hook */
 export const useKanbans = (param?: Partial<Kanban>) => {
@@ -37,4 +37,26 @@ export const useDeleteKanban = (queryKey: QueryKey) => {
             }),
         useDeleteConfig(queryKey)
     );
+};
+
+export interface SortProps {
+    //要重新排序的item
+    fromId: number;
+    //目标的位置
+    referenceId: number;
+    //放的类型，前还是后
+    type: "before" | "after";
+    //始kanban
+    fromKanbanId?: number;
+    //终kanban
+    toKanbanId?: number;
+}
+export const useReorderKanban = (queryKey: QueryKey) => {
+    const client = useHttp();
+    return useMutation((params: SortProps) => {
+        return client(`kanbans/reorder`, {
+            data: params,
+            method: "POST",
+        });
+    }, useReorderKanbanConfig(queryKey));
 };

@@ -12,22 +12,8 @@ import { Task } from "types/task";
 import { Mark } from "components/mark";
 import { useDeleteKanban } from "utils/kanban";
 import { Row } from "components/lib";
+import { Drag, Drop, DropChild } from "components/dragAndDrop";
 
-interface KanbanProps {
-    kanban: Kanban;
-}
-const TaskCard = ({ task }: { task: Task }) => {
-    const { startEdit } = useTasksModal();
-    const { name: keyWord } = useTasksSearchParams();
-    return (
-        <Card onClick={() => startEdit(task.id)} style={{ marginBottom: "0.5rem", cursor: "pointer" }} key={task.id}>
-            <p>
-                <Mark keyWord={keyWord} name={task.name} />
-            </p>
-            <TaskTypeIcon id={task.typeId} />
-        </Card>
-    );
-};
 export const TaskTypeIcon = ({ id }: { id: number }) => {
     const { data: taskTypes } = useTaskTypes();
     const name = taskTypes?.find((taskType) => taskType.id === id)?.name;
@@ -64,27 +50,59 @@ const More = ({ kanban }: KanbanProps) => {
         </Dropdown>
     );
 };
-export const KanbanColumn = ({ kanban }: KanbanProps) => {
+
+interface TaskCardProps {
+    task: Task;
+}
+// 使用react.forwardof 对传入KanbanColumn的ref进行透传
+const TaskCard = React.forwardRef<HTMLDivElement, TaskCardProps>(({ task, ...props }, ref) => {
+    const { startEdit } = useTasksModal();
+    const { name: keyWord } = useTasksSearchParams();
+    return (
+        <div ref={ref} {...props}>
+            <Card onClick={() => startEdit(task.id)} style={{ marginBottom: "0.5rem", cursor: "pointer" }} key={task.id}>
+                <p>
+                    <Mark keyWord={keyWord} name={task.name} />
+                </p>
+                <TaskTypeIcon id={task.typeId} />
+            </Card>
+        </div>
+    );
+});
+
+interface KanbanProps {
+    kanban: Kanban;
+}
+// 使用react.forwardof 对传入KanbanColumn的ref进行透传
+export const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanProps>(({ kanban, ...props }, ref) => {
     const { data: allTasks } = useTasks(useTasksSearchParams());
     const tasks = allTasks?.filter((task) => {
         return task.kanbanId === kanban.id;
     });
     return (
-        <Container>
+        <Container {...props} ref={ref}>
             <Row between>
                 <h3>{kanban.name}</h3>
-                <More kanban={kanban} />
+                <More kanban={kanban} key={kanban.id} />
             </Row>
 
             <TaskContainer>
-                {tasks?.map((task) => {
-                    return <TaskCard task={task} />;
-                })}
+                <Drop type={"ROW"} droppableId={String(kanban.id)} direction={"vertical"}>
+                    <DropChild style={{ minHeight: "5px" }}>
+                        {tasks?.map((task, taskIndex) => {
+                            return (
+                                <Drag index={taskIndex} key={task.id} draggableId={"task" + task.id}>
+                                    <TaskCard key={task.id} task={task} />
+                                </Drag>
+                            );
+                        })}
+                    </DropChild>
+                </Drop>
                 <CreateTask kanbanId={kanban.id} />
             </TaskContainer>
         </Container>
     );
-};
+});
 
 export const Container = styled.div`
     min-width: 27rem;

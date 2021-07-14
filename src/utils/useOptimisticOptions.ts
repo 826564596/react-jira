@@ -1,4 +1,6 @@
 import { QueryKey, useQueryClient } from "react-query";
+import { Task } from "types/task";
+import { reorder } from "./reorder";
 /**
  * 用于react-query optimistic update的配置
  * @param queryKey
@@ -48,4 +50,20 @@ export const useEditConfig = (queryKey: QueryKey) => {
 /**mutation的添加配置 */
 export const useAddConfig = (queryKey: QueryKey) => {
     return useConfig(queryKey, (target, old) => (old ? [...old, target] : []));
+};
+/**kanban排序的相关配置 */
+export const useReorderKanbanConfig = (queryKey: QueryKey) => {
+    return useConfig(queryKey, (target, old) => {
+        return reorder({ list: old, ...target }) || [];
+    });
+};
+/**Task排序的相关配置 */
+export const useReorderTaskConfig = (queryKey: QueryKey) => {
+    return useConfig(queryKey, (target, old) => {
+        const orderList = reorder({ list: old, ...target }) as Task[];
+        //匹配id,不管有没有跨看板都重新设置kanbanId
+        return orderList.map((item) => {
+            return item.id === target.fromId ? { ...item, kanbanId: target.toKanbanId } : item;
+        });
+    });
 };
