@@ -11,6 +11,7 @@ import { ProjectScreen } from "screens/project";
 import { resetRoute } from "utils";
 import { ProjectModal } from "screens/projectList/projectModal";
 import { ProjectPopover } from "components/projectPopover";
+import { UserPopover } from "components/userPopover";
 /**登录成功页面 */
 export const AuthenticatedApp = () => {
     return (
@@ -40,7 +41,7 @@ const PageHeader = () => {
                     <SoftwareLogo width={"18rem"} color={"rgb(38,132,255)"} />
                 </ButtonNoPadding>
                 <ProjectPopover />
-                <span>用户</span>
+                <UserPopover />
             </HeaderLeft>
             <HeaderRight>
                 <User />
