@@ -9,7 +9,10 @@ export const isVoid = (value: unknown) => {
     return value === undefined || value === null || value === "";
 };
 
-export const clearObject = (object: { [key: string]: unknown }) => {
+export const clearObject = (object?: { [key: string]: unknown }) => {
+    if (!object) {
+        return {};
+    }
     const result = { ...object };
     Object.keys(result).forEach((item: string) => {
         const value = result[item];

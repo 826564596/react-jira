@@ -1,7 +1,7 @@
 import { Epic } from "types/epic";
 import { useHttp } from "./http";
 import { useQuery, useMutation, QueryKey } from "react-query";
-import { useAddConfig, useDeleteConfig, useEditConfig } from "./useOptimisticOptions";
+import { useAddConfig, useDeleteConfig } from "./useOptimisticOptions";
 
 /**获取看板列表Hook */
 export const useEpics = (param?: Partial<Epic>) => {

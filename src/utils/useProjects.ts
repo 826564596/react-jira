@@ -7,7 +7,7 @@ import { Project } from "types/project";
 export const useProjects = (param?: Partial<Project>) => {
     const client = useHttp();
 
-    return useQuery<Project[], Error>(["projects", param], () => client(`projects`, { data: clearObject(param || {}) }));
+    return useQuery<Project[], Error>(["projects", clearObject(param)], () => client(`projects`, { data: param }));
 };
 
 export const useText = (param?: Partial<Project>) => {

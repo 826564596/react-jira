@@ -12,6 +12,7 @@ import { TaskModal } from "./taskModal";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { useKanbanQuerykey, useKanbanSearchParams, useProjectInUrl, useTasksQueryKey, useTasksSearchParams } from "./util";
 import { Drop, DropChild, Drag } from "components/dragAndDrop";
+import { Profiler } from "components/profiler";
 
 export const KanbanScreen = () => {
     useDocumentTitle("看板列表");
@@ -22,36 +23,38 @@ export const KanbanScreen = () => {
 
     const onDragEnd = useDragEnd();
     return (
-        <DragDropContext
-            onDragEnd={({ ...params }) => {
-                console.log(params);
-                onDragEnd(params);
-            }}
-        >
-            <ScreenContainer>
-                <h1>{currentProject?.name}看板</h1>
-                <SearchPanel />
-                {isLoading ? (
-                    <Spin size={"large"} />
-                ) : (
-                    <ColumnsContainer>
-                        <Drop type={"COLUMN"} direction={"horizontal"} droppableId={"kanban"}>
-                            <DropChild style={{ display: "flex" }}>
-                                {kanbans?.map((kanban, index) => {
-                                    return (
-                                        <Drag key={kanban.id} draggableId={"kanban" + kanban.id} index={index}>
-                                            <KanbanColumn kanban={kanban} key={kanban.id} />
-                                        </Drag>
-                                    );
-                                })}
-                            </DropChild>
-                        </Drop>
-                        <CreateKanban />
-                    </ColumnsContainer>
-                )}
-                <TaskModal />
-            </ScreenContainer>
-        </DragDropContext>
+        <Profiler id={"看板页面"}>
+            <DragDropContext
+                onDragEnd={({ ...params }) => {
+                    console.log(params);
+                    onDragEnd(params);
+                }}
+            >
+                <ScreenContainer>
+                    <h1>{currentProject?.name}看板</h1>
+                    <SearchPanel />
+                    {isLoading ? (
+                        <Spin size={"large"} />
+                    ) : (
+                        <ColumnsContainer>
+                            <Drop type={"COLUMN"} direction={"horizontal"} droppableId={"kanban"}>
+                                <DropChild style={{ display: "flex" }}>
+                                    {kanbans?.map((kanban, index) => {
+                                        return (
+                                            <Drag key={kanban.id} draggableId={"kanban" + kanban.id} index={index}>
+                                                <KanbanColumn kanban={kanban} key={kanban.id} />
+                                            </Drag>
+                                        );
+                                    })}
+                                </DropChild>
+                            </Drop>
+                            <CreateKanban />
+                        </ColumnsContainer>
+                    )}
+                    <TaskModal />
+                </ScreenContainer>
+            </DragDropContext>
+        </Profiler>
     );
 };
 /**捕获onDragEnd的参数对数据进行操作 */

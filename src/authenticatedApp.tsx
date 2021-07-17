@@ -32,6 +32,7 @@ export const AuthenticatedApp = () => {
     );
 };
 
+export default AuthenticatedApp;
 /**公共的Header*/
 const PageHeader = () => {
     return (
